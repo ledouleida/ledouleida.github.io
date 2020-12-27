@@ -270,7 +270,7 @@
         	    handleVerity(name){
                     this.$refs[name].validate((valid) => {
                         if (valid) {
-                           fetch('./api/verify',{
+                           fetch('//api_r.ledou.gq/verify',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
                                mode:"cors",
@@ -294,7 +294,7 @@
                             for(var attr in this.xiaguInline){
                                 newjson[attr]=this.xiaguInline[attr]
                             }
-                            fetch('./api/pkxiagu',{
+                            fetch('//api_r.ledou.gq/pkxiagu',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
                                mode:"cors",
@@ -309,7 +309,7 @@
                     })
                 },
                 viewbed(){
-                    fetch('./api/viewbed',{
+                    fetch('//api_r.ledou.gq/viewbed',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
                         mode:"cors",
@@ -340,7 +340,7 @@
                     }).catch(error=>{})
                 },
                 viewks(){
-                    fetch('./api/viewks',{
+                    fetch('//api_r.ledou.gq/viewks',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
                         mode:"cors",
