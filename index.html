@@ -1,0 +1,455 @@
+<!Doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>精准雷达</title>
+		<link rel="icon" href="./favicon.ico" type="image/x-icon">
+		<script src="./vue.min.js"></script>
+		<link rel="stylesheet" href="./iview.css">
+		<script src="./iview.min.js"></script>
+                <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	</head>
+	<body>
+		<div id="app">
+            <Collapse v-model="value1" class="collapse"  accordion @on-change="改变折叠">
+                <Panel name="1">
+                    简介
+                    <p slot="content">
+                        差不多哈，有空再添加功能吧！
+                    </p>
+                </Panel>
+                <Panel name="2">
+                    验证其合法性（填写请求体）
+                    <p slot="content">
+                        <i-form :label-width="90" ref="formInline" :rules="ruleInline" :model="formInline">
+                            <form-item label="请求体">
+                                <i-input type="password" v-model="requestbody" placeholder="请输入请求体" @on-change="requestbodychange"></i-input>
+                            </form-item>
+                            <form-item label="h5openid" prop="h5openid">
+                                <i-input type="password" class="input" v-model="formInline.h5openid" placeholder="h5openid"></i-input>
+                            </form-item>
+                            <form-item label="h5token" prop="h5token">
+                                <i-input type="password" class="input" v-model="formInline.h5token" placeholder="h5token"></i-input>
+                            </form-item>
+                            <form-item label="uid" prop="uid">
+                                <i-input type="text" class="input" v-model="formInline.uid" placeholder="uid"  number></i-input>
+                            </form-item>
+                            <i-button @click="handleVerity('formInline')">验证</i-button>
+                        </i-form>
+                    </p>
+                </Panel>
+                <Panel name="3">
+                    挑战峡谷
+                    <p slot="content">
+                        <i-form :label-width="90" ref="xiaguInline" :model="xiaguInline" :rules="xiaguInline_r">
+                            <form-item label="帮派id" prop="pk_fac_id">
+                                <i-input type="text" class="input" placeholder="帮派id" v-model="xiaguInline.pk_fac_id"  number></i-input>
+                            </form-item>
+                            <i-button @click="handleVerity2('xiaguInline')">挑战</i-button>
+                        </i-form>
+                    </p>
+                </Panel>
+                <Panel name="4">
+                    查看敌对床位
+                    <div slot="content">
+                        <i-button @click="viewbed()">看床</i-button>
+                        <Tabs value="name1">
+                            <Tab-Pane label="百年床" name="name1">
+                                <chuang ref="beds100"></chuang>
+                            </Tab-Pane>
+                            <Tab-Pane label="千年床" name="name2">
+                                <chuang ref="beds1000"></chuang>
+                            </Tab-Pane>
+                        </Tabs>
+                    </div>
+                </Panel>
+                <Panel name="5">
+                    查看敌对矿山
+                    <p slot="content">
+                        <i-button @click="viewks()">看矿</i-button>
+                        <kuanshan ref="ks"></kuanshan>
+                    </p>
+                </Panel>
+                <Panel name="6">
+                    查看敌对家丁 
+                    <p slot="content">
+                        <i-form :label-width="90" ref="jdInline" :model="jdInline" :rules="xiaguInline_r" inline>
+                            <form-item label="帮派id" prop="pk_fac_id">
+                                <i-input type="text" class="input" placeholder="帮派id" v-model="jdInline.pk_fac_id"  number></i-input><i-button @click="viewfacjd()">查看</i-button>
+                            </form-item>     
+                            <form-item label="用户id">
+                                <auto-complete v-model="jduid" :data="jiadingvalue" @on-search="handleSearchjiading" placeholder="输入寻找的家丁" @on-blur="jdblur" on-select="jdselect"></auto-complete>
+                            </form-item>
+                            <jiading ref="jd"></jiading>
+                        </i-form>
+                    </p>
+                </Panel>
+                <Panel name="7">
+                    其他功能
+                    <p slot="content"></p>
+                </Panel>
+            </Collapse>
+		</div>
+	</body>
+    <script>
+        Vue.component("jiading",{
+            data:function(){
+                return {
+                    columns:[
+                        {
+                            title:"名字",key:"name",width:150
+                        },
+                        {
+                            title:"id",key:"owneruid",width:100,sortable:true,filterMultiple: true,
+                            filters:[],
+                            filterMethod: (value, row) => {
+                                return value === row.owneruid
+                            }
+                        },
+                        {
+                            title:"战斗力",key:"attack_power",width:120,sortable:true
+                        },
+                        {
+                            title:"拥有的家丁",key:"servans",width:300,
+                            render:(h,params)=>{
+                                let servans=params.row.servans
+                                return h('div',servans.join("、"))
+                            }
+                        }
+                    ],
+                    data:[]
+                }
+            },
+            template:'<Table :columns="columns" :data="data" height="500" width="100vw" size="small" no-data-text="哈哈哈，没家丁了" no-filtered-data-text="哈哈哈，家丁空空如也"></Table>'
+        }) 
+        Vue.component("kuanshan",{
+            data:function(){
+                return {
+                    columns:[
+                        {
+                            title:"页数",key:"area_id",width:80,sortable: true,sortType: "asc"
+                        },
+                        {
+                            title:"帮派名",key:"fac_name",width:150,filterMultiple: true,
+                            filters:[],
+                            filterMethod: (value, row) => {
+                                return value === row.fac_name
+                            }
+                        },
+                        {
+                            title:"矿等级",key:"level",width:120,sortable: true
+                        },
+                        {
+                            title:"名字",key:"role_name",width:150
+                        }
+                    ],
+                    data:[]
+                }
+            },
+            watch:{
+                data(val,oldVal){
+                    let ksSet=new Set()
+                    
+                    val.forEach(function(item){
+                        ksSet.add(item["fac_name"])
+                    })
+                    this.columns[1].filters=[]
+                    for (let item of ksSet.values()){
+                        this.columns[1].filters.push({label:item,value:item})
+                    }
+
+                }
+            },
+            template:'<Table :columns="columns" :data="data" height="500" width="100vw" size="small" no-data-text="哈哈哈，没人上矿" no-filtered-data-text="哈哈哈，矿空空如也"></Table>'
+        }
+        )
+        Vue.component("chuang",{
+            data:function(){
+                return {
+                    columns:[
+                        {
+                            title:"名字",key:"name",width:145
+                        },
+                        {
+                            title:"页数",key:"page", width:75,sortable:true
+                        },
+                        {
+                            title:"寒气",key:"cold",width:95,sortable: true
+                        },
+                        {
+                            title:"帮派名",key:"fac_name",width:145,filterMultiple: true,
+                            filters:[],
+                            filterMethod: (value, row) => {
+                                return value === row.fac_name
+                            }
+                        },
+                        {
+                            title:"编号",key:"room_id",width:95,sortable: true,sortType: "asc"
+                        },
+                        {
+                            title:"帮派id",key:"fac_id",width:115,sortable: true,filterMultiple: true,
+                            filters:[],
+                            filterMethod: (value, row) => {
+                                return value === row.fac_name
+                            }
+                        },
+                        {
+                            title:"战斗力",key:"fight_power",width:115,sortable: true
+                        },
+                        {
+                            title:"id",key:"uid",width:95,sortable: true,filterMultiple: true,
+                            filters:[],
+                            filterMethod: (value, row) => {
+                                return value === row.uid
+                            }
+                        }
+                    ],
+                    data:[]
+                }
+            },
+            watch:{
+                data(val,oldVal){
+                    let chuangSet1=new Set()
+                    
+                    val.forEach(function(item){
+                        chuangSet1.add(item["fac_name"])
+                    })
+                    this.columns[3].filters=[]
+                    for (let item of chuangSet1.values()){
+                        this.columns[3].filters.push({label:item,value:item})
+                    }
+                    let chuangSet2=new Set()
+                    
+                    val.forEach(function(item){
+                        chuangSet2.add(item["fac_id"])
+                    })
+                    this.columns[5].filters=[]
+                    for (let item of chuangSet2.values()){
+                        this.columns[5].filters.push({label:item,value:item})
+                    }
+                }
+            },
+            template:'<Table :columns="columns" :data="data" height="500" width="100vw" size="small" no-data-text="哈哈哈，没人上床" no-filtered-data-text="哈哈哈，床空空如也"></Table>'
+        })
+	    var vm=new Vue({
+      		el: '#app',
+        	data: {
+                jiadingvalue:'',
+                requestbody:'',
+                jduid:'',
+                formInline:{
+                   h5openid:'',
+                    h5token:'',
+                    uid:''
+                },
+                xiaguInline:{
+                    pk_fac_id:''
+                },
+                jdInline:{
+                    pk_fac_id:'',
+                },
+                ruleInline:{
+                    h5openid:[{ required: true, message: '请输入h5openid', trigger: 'blur' }],
+                    h5token:[{ required: true, message: '请输入h5token', trigger: 'blur' }],
+                    uid:[{ required: true, message: '请输入uid', trigger: 'blur',type: 'number'},
+                        { type: 'number', min: 100000,max:99999999, message: '请输入合法id', trigger: 'blur' }]
+                },
+                xiaguInline_r:{
+                    pk_fac_id:[{ required: true, message: '请输入uid', trigger: 'blur' ,type: 'number'},
+                    { type: 'number', min: 100000,max:999999, message: '请输入合法的帮派id', trigger: 'blur' }]
+                },
+                value1:"1",
+        	},
+        	methods: {
+                jdblur(event){
+                    vm.$refs["jd"].columns[1].filters.push({label:this.jduid,value:this.jduid});
+                },
+                jdselect(value1){
+                    vm.$refs["jd"].columns[1].filters.push({label:value1,value:value1});
+                },
+        	    handleVerity(name){
+                    this.$refs[name].validate((valid) => {
+                        if (valid) {
+                           fetch('./api/verify',{
+                               method: 'POST',
+                               headers:{"Content-Type":"application/json; charset=UTF-8"},
+                               mode:"cors",
+                               body:JSON.stringify(this.formInline)
+                           }).then(response=>response.text())
+                           .then(function(res){
+                                vm.$Message.info(res);
+                           })
+                        } else {
+                            vm.$Message.error('可能你输错了!');
+                        }
+                    })
+                },
+                handleVerity2(name){
+                    this.$refs[name].validate((valid) => {
+                        if (valid) {
+                            var newjson={};
+                            for(var attr in this.formInline){
+                                newjson[attr]=this.formInline[attr]
+                            }
+                            for(var attr in this.xiaguInline){
+                                newjson[attr]=this.xiaguInline[attr]
+                            }
+                            fetch('./api/pkxiagu',{
+                               method: 'POST',
+                               headers:{"Content-Type":"application/json; charset=UTF-8"},
+                               mode:"cors",
+                               body:JSON.stringify(newjson)
+                            }).then(response=>response.text())
+                            .then(function(res){
+                                vm.$Message.info(res);
+                            })
+                        } else {
+                            vm.$Message.error('可能你输错了!');
+                        }
+                    })
+                },
+                viewbed(){
+                    fetch('./api/viewbed',{
+                        method: 'POST',
+                        headers:{"Content-Type":"application/json; charset=UTF-8"},
+                        mode:"cors",
+                        body:JSON.stringify(this.formInline)
+                    }).then(response=>{
+                        if(response.ok){
+                            return response.json()
+                        }else{
+                            if(response.status==400){
+                                vm.$Message.error("你的请求体没填或部分填写不完整");
+                            }else if(response.status==502){
+                                vm.$Message.error("系统繁忙");
+                            }else if(response.status==404){
+                                vm.$Message.error("无法访问");
+                            }else{
+                                vm.$Message.error("其他错误");
+                            }
+                            return Promise.reject({
+                                status: response.status,
+                                statusText: response.statusText
+                            })
+                        }
+                            
+                    }).then(function(res){
+                        vm.$refs["beds100"].data=res["beds100"];
+                        vm.$refs["beds1000"].data=res["beds1000"];
+                        vm.$Message.info(res["status"]);
+                    }).catch(error=>{})
+                },
+                viewks(){
+                    fetch('./api/viewks',{
+                        method: 'POST',
+                        headers:{"Content-Type":"application/json; charset=UTF-8"},
+                        mode:"cors",
+                        body:JSON.stringify(this.formInline)
+                    }).then(response=>{
+                        if(response.ok){
+                            return response.json()
+                        }else{
+                            if(response.status==400){
+                                vm.$Message.error("你的请求体没填或部分填写不完整");
+                            }else if(response.status==502){
+                                vm.$Message.error("系统繁忙");
+                            }else if(response.status==404){
+                                vm.$Message.error("无法访问");
+                            }else{
+                                vm.$Message.error("其他错误");
+                            }
+                            return Promise.reject({
+                                status: response.status,
+                                statusText: response.statusText
+                            })
+                        }
+                            
+                    }).then(function(res){
+                        vm.$refs["ks"].data=res["kuangshan"];
+                        vm.$Message.info(res["status"]);
+                    }).catch(error=>{})
+                },
+                requestbodychange(event){
+                    var params=vm.requestbody.split("&")
+                    for(var i=0;i<params.length;i++){
+                        var keyvalue=params[i].split("=")
+                        switch(keyvalue[0]){
+                            case "uid":
+                                vm.formInline.uid=Number(keyvalue[1])
+                                break;
+                            case "h5openid":
+                                vm.formInline.h5openid=keyvalue[1]
+                                break;
+                            case "h5token":
+                                vm.formInline.h5token=keyvalue[1]
+                                break;
+                        }
+                    }
+                },
+                handleSearchjiading(value){
+                    var jdid=new Array();
+                    var patt=new RegExp("^"+value)
+                    vm.$refs["jd"].data.forEach(function(item){
+                        if(patt.test(item.owneruid)){
+                            jdid.push(item.owneruid)
+                        }
+                    })
+                    this.jiadingvalue=!value?[]:jdid
+                },
+                改变折叠(key){
+                    //vm.$forceUpdate()
+                },
+                viewfacjd(){
+                    var newjson={};
+                    for(var attr in this.formInline){
+                        newjson[attr]=this.formInline[attr]
+                    }
+                    for(var attr in this.jdInline){
+                        newjson[attr]=this.jdInline[attr]
+                    }
+                    fetch('./api/viewcy',{
+                        method: 'POST',
+                        headers:{"Content-Type":"application/json; charset=UTF-8"},
+                        mode:"cors",
+                        body:JSON.stringify(newjson)
+                    }).then(response=>{
+                        if(response.ok){
+                            return response.json()
+                        }else{
+                            if(response.status==400){
+                                vm.$Message.error("你的请求体没填或部分填写不完整");
+                            }else if(response.status==502){
+                                vm.$Message.error("系统繁忙");
+                            }else if(response.status==404){
+                                vm.$Message.error("无法访问");
+                            }else{
+                                vm.$Message.error("其他错误");
+                            }
+                            return Promise.reject({
+                                status: response.status,
+                                statusText: response.statusText
+                            })
+                        }
+                            
+                    }).then(function(res){
+                        vm.$refs["jd"].data=res["havingservant"]
+                        vm.$Message.info(res["status"]);
+                    }).catch(error=>{})
+                }
+            }
+        })
+        window.vm=vm;
+	</script>
+	<style>
+        .input {
+            width: 15rem
+        }
+        .collapse {
+            //width: 30rem
+        }
+        .ivu-tabs-nav .ivu-tabs-tab{
+            height: 2rem
+        }
+	</style>
+</html>
+
