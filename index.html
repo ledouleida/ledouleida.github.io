@@ -273,7 +273,7 @@
                            fetch('//api_r.ledou.gq/verify',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
-                               mode:"cors",
+                               mode:"no-cors",
                                body:JSON.stringify(this.formInline)
                            }).then(response=>response.text())
                            .then(function(res){
@@ -297,7 +297,7 @@
                             fetch('//api_r.ledou.gq/pkxiagu',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
-                               mode:"cors",
+                               mode:"no-cors",
                                body:JSON.stringify(newjson)
                             }).then(response=>response.text())
                             .then(function(res){
@@ -312,7 +312,7 @@
                     fetch('//api_r.ledou.gq/viewbed',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
-                        mode:"cors",
+                        mode:"no-cors",
                         body:JSON.stringify(this.formInline)
                     }).then(response=>{
                         if(response.ok){
@@ -343,7 +343,7 @@
                     fetch('//api_r.ledou.gq/viewks',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
-                        mode:"cors",
+                        mode:"no-cors",
                         body:JSON.stringify(this.formInline)
                     }).then(response=>{
                         if(response.ok){
@@ -410,7 +410,7 @@
                     fetch('//api_r.ledou.gq/viewcy',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
-                        mode:"cors",
+                        mode:"no-cors",
                         body:JSON.stringify(newjson)
                     }).then(response=>{
                         if(response.ok){
