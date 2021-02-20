@@ -90,8 +90,22 @@
                     </p>
                 </Panel>
                 <Panel name="7">
+                    查看帮派材料
+                    <p slot="content">
+                        <i-form :label-width="90" ref="viewfacInline" :model="viewfacInline" :rules="viewfacInline_r">
+                            <form-item label="帮派id" prop="pk_fac_id">
+                                <i-input type="text" class="input" placeholder="帮派id" v-model="viewfacInline.pk_fac_id"  number></i-input>
+                            </form-item>
+                            <i-button @click="handleVerity3('viewfacInline')">查看</i-button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<a style="color:black">{{facinfo}}</a>
+                        </i-form>
+                    </p>
+                </Panel>
+                <Panel name="8">
                     其他功能
-                    <p slot="content"></p>
+                    <p slot="content">
+                        
+                    </p>
                 </Panel>
             </Collapse>
 		</div>
@@ -243,16 +257,20 @@
                     {value:"api_r2",label:"国内ipv6线路"},
                     {value:"api_r",label:"国际线路"}
                 ],
-                model_line:'api_r',
+                model_line:'api_r2',
                 jiadingvalue:'',
                 requestbody:'',
                 jduid:'',
+                facinfo:'',
                 formInline:{
                    h5openid:'',
                     h5token:'',
                     uid:''
                 },
                 xiaguInline:{
+                    pk_fac_id:''
+                },
+                viewfacInline:{
                     pk_fac_id:''
                 },
                 jdInline:{
@@ -265,6 +283,10 @@
                         { type: 'number', min: 100000,max:99999999, message: '请输入合法id', trigger: 'blur' }]
                 },
                 xiaguInline_r:{
+                    pk_fac_id:[{ required: true, message: '请输入uid', trigger: 'blur' ,type: 'number'},
+                    { type: 'number', min: 100000,max:999999, message: '请输入合法的帮派id', trigger: 'blur' }]
+                },
+                viewfacInline_r:{
                     pk_fac_id:[{ required: true, message: '请输入uid', trigger: 'blur' ,type: 'number'},
                     { type: 'number', min: 100000,max:999999, message: '请输入合法的帮派id', trigger: 'blur' }]
                 },
@@ -312,6 +334,30 @@
                             }).then(response=>response.text())
                             .then(function(res){
                                 vm.$Message.info(res);
+                            })
+                        } else {
+                            vm.$Message.error('可能你输错了!');
+                        }
+                    })
+                },
+                handleVerity3(name){
+                    this.$refs[name].validate((valid) => {
+                        if (valid) {
+                            var newjson={};
+                            for(var attr in this.formInline){
+                                newjson[attr]=this.formInline[attr]
+                            }
+                            for(var attr in this.viewfacInline){
+                                newjson[attr]=this.viewfacInline[attr]
+                            }
+                            fetch('//'+vm.model_line+'.ledou.gq/viewfac',{
+                               method: 'POST',
+                               headers:{"Content-Type":"application/json; charset=UTF-8"},
+                               mode:"cors",
+                               body:JSON.stringify(newjson)
+                            }).then(response=>response.text())
+                            .then(function(res){
+                                vm.facinfo=res;
                             })
                         } else {
                             vm.$Message.error('可能你输错了!');
