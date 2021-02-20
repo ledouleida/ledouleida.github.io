@@ -22,6 +22,11 @@
                     验证其合法性（填写请求体）
                     <p slot="content">
                         <i-form :label-width="90" ref="formInline" :rules="ruleInline" :model="formInline">
+                            <form-item label="选择线路">
+                                <i-select v-model="model_line" style="width:200px">
+                                    <i-option v-for="item in lines" :value="item.value" :key="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </form-item>
                             <form-item label="请求体">
                                 <i-input type="password" v-model="requestbody" placeholder="请输入请求体" @on-change="requestbodychange"></i-input>
                             </form-item>
@@ -234,6 +239,11 @@
 	    var vm=new Vue({
       		el: '#app',
         	data: {
+                lines:[
+                    {value:"api_r2",label:"国内ipv6线路"},
+                    {value:"api_r",label:"国际线路"}
+                ],
+                model_line:'api_r',
                 jiadingvalue:'',
                 requestbody:'',
                 jduid:'',
@@ -270,7 +280,7 @@
         	    handleVerity(name){
                     this.$refs[name].validate((valid) => {
                         if (valid) {
-                           fetch('//api_r.ledou.gq/verify',{
+                           fetch('//'+vm.model_line+'.ledou.gq/verify',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
                                mode:"cors",
@@ -294,7 +304,7 @@
                             for(var attr in this.xiaguInline){
                                 newjson[attr]=this.xiaguInline[attr]
                             }
-                            fetch('//api_r.ledou.gq/pkxiagu',{
+                            fetch('//'+vm.model_line+'.ledou.gq/pkxiagu',{
                                method: 'POST',
                                headers:{"Content-Type":"application/json; charset=UTF-8"},
                                mode:"cors",
@@ -309,7 +319,7 @@
                     })
                 },
                 viewbed(){
-                    fetch('//api_r.ledou.gq/viewbed',{
+                    fetch('//'+vm.model_line+'.ledou.gq/viewbed',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
                         mode:"cors",
@@ -340,7 +350,7 @@
                     }).catch(error=>{})
                 },
                 viewks(){
-                    fetch('//api_r.ledou.gq/viewks',{
+                    fetch('//'+vm.model_line+'.ledou.gq/viewks',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
                         mode:"cors",
@@ -407,7 +417,7 @@
                     for(var attr in this.jdInline){
                         newjson[attr]=this.jdInline[attr]
                     }
-                    fetch('//api_r.ledou.gq/viewcy',{
+                    fetch('//'+vm.model_line+'.ledou.gq/viewcy',{
                         method: 'POST',
                         headers:{"Content-Type":"application/json; charset=UTF-8"},
                         mode:"cors",
