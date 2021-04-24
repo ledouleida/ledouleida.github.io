@@ -187,19 +187,19 @@
                 return {
                     columns:[
 			{
-		            type: 'selection',align: 'center',width:40
+		            type: 'selection',align: 'center',width:30
 			},
                         {
-                            title:"名字",key:"name",width:145
+                            title:"名字",key:"name",width:140
                         },
                         {
-                            title:"页数",key:"page", width:65,sortable:true
+                            title:"页数",key:"page", width:60,sortable:true
                         },
                         {
                             title:"寒气",key:"cold",width:65,sortable: true
                         },
                         {
-                            title:"帮派名",key:"fac_name",width:145,filterMultiple: true,
+                            title:"帮派名",key:"fac_name",width:140,filterMultiple: true,
                             filters:[],
                             filterMethod: (value, row) => {
                                 return value === row.fac_name
