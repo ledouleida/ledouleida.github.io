@@ -236,18 +236,18 @@
                     val.forEach(function(item){
                         chuangSet1.add(item["fac_name"])
                     })
-                    this.columns[3].filters=[]
+                    this.columns[4].filters=[]
                     for (let item of chuangSet1.values()){
-                        this.columns[3].filters.push({label:item,value:item})
+                        this.columns[4].filters.push({label:item,value:item})
                     }
                     let chuangSet2=new Set()
                     
                     val.forEach(function(item){
                         chuangSet2.add(item["fac_id"])
                     })
-                    this.columns[5].filters=[]
+                    this.columns[6].filters=[]
                     for (let item of chuangSet2.values()){
-                        this.columns[5].filters.push({label:item,value:item})
+                        this.columns[6].filters.push({label:item,value:item})
                     }
                 }
             },
