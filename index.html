@@ -57,7 +57,7 @@
                 <Panel name="4">
                     查看敌对床位
                     <div slot="content">
-                        <i-button @click="viewbed()">看床</i-button><i-button @click="alert('功能有待实现')">踢！</i-button>
+                        <i-button @click="viewbed()">看床</i-button><i-button @click="ti()">踢！</i-button>
                         <Tabs value="name1">
                             <Tab-Pane label="百年床" name="name1">
                                 <chuang ref="beds100"></chuang>
@@ -186,9 +186,9 @@
             data:function(){
                 return {
                     columns:[
-			{
-		            type: 'selection',align: 'center',width:30
-			},
+			//{
+		        //    type: 'selection',align: 'center',width:30
+			//},
                         {
                             title:"名字",key:"name",width:125
                         },
@@ -236,18 +236,18 @@
                     val.forEach(function(item){
                         chuangSet1.add(item["fac_name"])
                     })
-                    this.columns[4].filters=[]
+                    this.columns[3].filters=[]
                     for (let item of chuangSet1.values()){
-                        this.columns[4].filters.push({label:item,value:item})
+                        this.columns[3].filters.push({label:item,value:item})
                     }
                     let chuangSet2=new Set()
                     
                     val.forEach(function(item){
                         chuangSet2.add(item["fac_id"])
                     })
-                    this.columns[6].filters=[]
+                    this.columns[5].filters=[]
                     for (let item of chuangSet2.values()){
-                        this.columns[6].filters.push({label:item,value:item})
+                        this.columns[5].filters.push({label:item,value:item})
                     }
                 }
             },
@@ -368,6 +368,9 @@
                         }
                     })
                 },
+		ti(){
+			vm.$Message.info('小叽叽说不需要这个功能，砍了!');
+		},
                 viewbed(){
                     fetch('//'+vm.model_line+'.ledou.gq/viewbed',{
                         method: 'POST',
