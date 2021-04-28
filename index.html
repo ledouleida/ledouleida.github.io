@@ -116,7 +116,7 @@
                 return {
                     columns:[
                         {
-                            title:"名字",key:"name",width:150
+                            title:"名字",key:"name",width:115
                         },
                         {
                             title:"id",key:"owneruid",width:100,sortable:true,filterMultiple: true,
@@ -126,7 +126,7 @@
                             }
                         },
                         {
-                            title:"战斗力",key:"attack_power",width:120,sortable:true
+                            title:"战斗力",key:"attack_power",width:100,sortable:true
                         },
                         {
                             title:"拥有的家丁",key:"servans",width:300,
@@ -146,20 +146,20 @@
                 return {
                     columns:[
                         {
-                            title:"页数",key:"area_id",width:80,sortable: true,sortType: "asc"
+                            title:"页数",key:"area_id",width:60,sortable: true,sortType: "asc"
                         },
                         {
-                            title:"帮派名",key:"fac_name",width:150,filterMultiple: true,
+                            title:"帮派名",key:"fac_name",width:115,filterMultiple: true,
                             filters:[],
                             filterMethod: (value, row) => {
                                 return value === row.fac_name
                             }
                         },
                         {
-                            title:"矿等级",key:"level",width:120,sortable: true
+                            title:"矿等级",key:"level",width:60,sortable: true
                         },
                         {
-                            title:"名字",key:"role_name",width:150
+                            title:"名字",key:"role_name",width:115
                         }
                     ],
                     data:[]
