@@ -324,7 +324,7 @@
 						   method: 'POST',
 						   headers:{"Content-Type":"application/x-www-form-urlencoded"},
 						   mode:"cors",
-						   body:requestbody
+						   body:this.requestbody
 					   }).then(response=>response.text())
 					   .then(function(res){
 						   vm.$Message.info("喇叭获取好参数了");
