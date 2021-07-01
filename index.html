@@ -39,7 +39,8 @@
                             <form-item label="uid" prop="uid">
                                 <i-input type="text" class="input" v-model="formInline.uid" placeholder="uid"  number></i-input>
                             </form-item>
-                            <i-button @click="handleVerity('formInline')">验证</i-button>
+                            <i-button @click="handleVerity('formInline',1)">验证</i-button>
+			    <i-button @click="handleVerity('formInline',2)">让喇叭获取这个请求体</i-button>
                         </i-form>
                     </p>
                 </Panel>
@@ -303,22 +304,42 @@
                 jdselect(value1){
                     vm.$refs["jd"].columns[1].filters.push({label:value1,value:value1});
                 },
-        	    handleVerity(name){
-                    this.$refs[name].validate((valid) => {
-                        if (valid) {
-                           fetch('//'+vm.model_line+'.ledou.gq/verify',{
-                               method: 'POST',
-                               headers:{"Content-Type":"application/json; charset=UTF-8"},
-                               mode:"cors",
-                               body:JSON.stringify(this.formInline)
-                           }).then(response=>response.text())
-                           .then(function(res){
-                                vm.$Message.info(res);
-                           })
-                        } else {
-                            vm.$Message.error('可能你输错了!');
-                        }
-                    })
+        	handleVerity(name,id){
+			    this.$refs[name].validate((valid) => {
+				if (valid) {
+			           switch(id){
+				       case 1:
+					   fetch('//'+vm.model_line+'.ledou.gq/verify',{
+					       method: 'POST',
+					       headers:{"Content-Type":"application/json; charset=UTF-8"},
+					       mode:"cors",
+					       body:JSON.stringify(this.formInline)
+					   }).then(response=>response.text())
+					   .then(function(res){
+						vm.$Message.info(res);
+					   })
+					   break;
+				        case 2:
+					   fetch("https://zone4.ledou.qq.com/fcgi-bin/petpk",{
+						   method: 'POST',
+						   headers:{"Content-Type":"application/x-www-form-urlencoded"},
+						   mode:"cors",
+						   body:requestbody
+					   }).then(response=>response.text())
+					   .then(function(res){
+						   vm.$Message.info("喇叭获取好参数了");
+					   })
+					   break;
+					default:
+						vm.$Message.error("参数不合法");   
+				   }
+
+				   }
+				   
+				} else {
+				    vm.$Message.error('可能你输错了!');
+				}
+			    })
                 },
                 handleVerity2(name){
                     this.$refs[name].validate((valid) => {
